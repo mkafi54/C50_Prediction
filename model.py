@@ -4,8 +4,10 @@ import rpy2.robjects as ro
 from rpy2.robjects import DataFrame
 from rpy2.robjects.packages import importr
 from rpy2 import robjects
-from view import *
 
+import layoutNew
+from view import *
+from layoutNew import *
 C50 = importr('C50')
 C5_0 = robjects.r('C5.0')
 stats = importr('stats')
@@ -20,33 +22,20 @@ class Model():
         self.C5_0 = robjects.r('C5.0')
         self.stats = importr('stats')
         self.base = importr("base")
-        app = QApplication(sys.argv)
-        self.view = MyWindow(self)
-        self.view.show()
+
+        # app = QApplication(sys.argv)
+        # self.view = MyWindow(self)
+        # self.view.show()
+        # sys.exit(app.exec_())
+
+        app = QtWidgets.QApplication(sys.argv)
+        MainWindow = QtWidgets.QMainWindow()
+        self.layoutNew = Ui_MainWindow(model)
+        self.layoutNew.setupUi(MainWindow)
+        MainWindow.show()
         sys.exit(app.exec_())
 
-
-# ==================================================== Target Variable
-#
-# ==================================================== Data Uji
-#     def testing(self):
-#         test = ([self.view.jk], [self.view.us], [self.view.kw], [self.view.sk], [self.view.pn], [self.view.ij])
-#         rtest = list(map(ro.StrVector, test))
-#         q = OrderedDict(zip(map(str, range(len(rtest))), rtest))
-#         datatest = DataFrame(q)
-#         return datatest
-#
-#     # def c50(self):
-#     #     m = Model()
-#     #     model = C50.C5_0(m.train(), m.attr())
-#     #     print(base.summary(model))
-#     #     return model
-#
-#     def testPrint(self):
-#         # m = Model()
-#         print(self.testing())
-
-    # m = model()
+    m = "worked"
     def c5(self):
         print("Data Prediksi : ")
         atribute = ['jenis_kelamin',
@@ -87,6 +76,9 @@ class Model():
         print(base.summary(model))
 
         print(robjects.r.predict(model, datatest))
+
+    def test(self):
+        print("works")
 # c = ("hello")
 
 # base.plot(model)
