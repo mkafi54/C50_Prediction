@@ -9,39 +9,43 @@
 
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QLabel
+from PyQt5.QtCore import QUrl, QFileInfo
+from PyQt5.QtWidgets import QLabel, QFileDialog
 
 import model
 
 
 class Ui_MainWindow(object):
     def __init__(self, model):
+        self.filename = None
+        self.splitVal = None
         self.model = model
-        # ui = Ui_MainWindow(model)
-        # ui.setupUi(self)
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(572, 340)
+
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
+
         self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
         self.tabWidget.setGeometry(QtCore.QRect(30, 40, 511, 231))
         self.tabWidget.setStyleSheet("background-color: rgb(203, 255, 153);")
         self.tabWidget.setObjectName("tabWidget")
+
         self.tab = QtWidgets.QWidget()
         self.tab.setObjectName("tab")
+
         self.frame = QtWidgets.QFrame(self.tab)
         self.frame.setGeometry(QtCore.QRect(10, 20, 351, 51))
-        self.frame.setStyleSheet("background-color : rgb(255, 255, 255);\n"
-"border-color: rgb(8, 8, 8);")
+        self.frame.setStyleSheet("background-color : rgb(255, 255, 255);\n" "border-color: rgb(8, 8, 8);")
         self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame.setObjectName("frame")
         self.fileName = QtWidgets.QLabel(self.frame)
-        self.fileName.setGeometry(QtCore.QRect(10, 0, 47, 13))
-        self.fileName.setObjectName("fileName")
-        self.spinBox = QtWidgets.QSpinBox(self.tab)
+        self.fileName.setGeometry(QtCore.QRect(10, 0, 9999, 13))
+        # self.fileName.setObjectName("fileName")
+        self.spinBox = QtWidgets.QSpinBox(self.tab, value=1, prefix='0.')
         self.spinBox.setGeometry(QtCore.QRect(210, 100, 42, 22))
         self.spinBox.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.spinBox.setObjectName("spinBox")
@@ -49,14 +53,20 @@ class Ui_MainWindow(object):
         self.iimportKlass.setGeometry(QtCore.QRect(400, 20, 81, 31))
         self.iimportKlass.setStyleSheet("background-color: rgb(170, 170, 127);")
         self.iimportKlass.setObjectName("iimportKlass")
+        self.iimportKlass.clicked.connect(self.impFile)
+
         self.buttonSimpan = QtWidgets.QPushButton(self.tab)
         self.buttonSimpan.setGeometry(QtCore.QRect(400, 100, 81, 31))
         self.buttonSimpan.setStyleSheet("background-color: rgb(170, 170, 127);")
         self.buttonSimpan.setObjectName("buttonSimpan")
+        self.buttonSimpan.clicked.connect(self.saveFile)
+
         self.label_2 = QtWidgets.QLabel(self.tab)
         self.label_2.setGeometry(QtCore.QRect(20, 100, 101, 16))
         self.label_2.setObjectName("label_2")
+        #===================================================================
         self.tabWidget.addTab(self.tab, "")
+
         self.tab_2 = QtWidgets.QWidget()
         self.tab_2.setObjectName("tab_2")
         self.label_3 = QtWidgets.QLabel(self.tab_2)
@@ -71,19 +81,21 @@ class Ui_MainWindow(object):
         self.DatasetLabel = QtWidgets.QLabel(self.tab_2)
         self.DatasetLabel.setGeometry(QtCore.QRect(70, 40, 71, 16))
         self.DatasetLabel.setObjectName("DatasetLabel")
+        #===================================================================== View Result
 
-        self.scrollArea = QtWidgets.QScrollArea(self.tab_2)
+        self.scrollArea = QtWidgets.QTextEdit(self.tab_2, readOnly=True)
         self.scrollArea.setGeometry(QtCore.QRect(10, 80, 451, 91))
         self.scrollArea.setStyleSheet("background-color: rgb(255, 255, 255);")
-        self.scrollArea.setWidgetResizable(True)
+        # self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
+
         labellist = []
         
 
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 449, 89))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
-        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+        # self.scrollArea.setWidget(self.scrollAreaWidgetContents)
 
         self.startKlass = QtWidgets.QPushButton(self.tab_2)
         self.startKlass.setGeometry(QtCore.QRect(380, 20, 101, 31))
@@ -91,16 +103,19 @@ class Ui_MainWindow(object):
 "font: 75 10pt \"MS Shell Dlg 2\";\n"
 "border-color: rgb(0, 0, 0);")
         self.startKlass.setObjectName("startKlass")
-        self.startKlass.clicked.connect(self.clicked)
 
+        self.startKlass.clicked.connect(self.clicked)
+        #===========================================================================================
         self.tabWidget.addTab(self.tab_2, "")
         self.tab_3 = QtWidgets.QWidget()
         self.tab_3.setObjectName("tab_3")
         self.importPred = QtWidgets.QPushButton(self.tab_3)
         self.importPred.setGeometry(QtCore.QRect(410, 20, 81, 31))
-        self.importPred.setStyleSheet("background-color: rgb(170, 170, 127);\n"
-"font: 75 10pt \"MS Shell Dlg 2\";")
+        self.importPred.setStyleSheet("background-color: rgb(170, 170, 127);\n" "font: 75 10pt \"MS Shell Dlg 2\";")
+
         self.importPred.setObjectName("importPred")
+        self.importPred.clicked.connect(self.impFile)
+
         self.frame_2 = QtWidgets.QFrame(self.tab_3)
         self.frame_2.setGeometry(QtCore.QRect(20, 10, 351, 61))
         self.frame_2.setStyleSheet("background-color: rgb(255, 255, 255);\n"
@@ -121,6 +136,7 @@ class Ui_MainWindow(object):
         self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 349, 78))
         self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
         self.scrollArea_2.setWidget(self.scrollAreaWidgetContents_2)
+        #====================================================================================================
         self.tabWidget.addTab(self.tab_3, "")
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(210, 10, 131, 16))
@@ -141,7 +157,6 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.fileName.setText(_translate("MainWindow", "TextLabel"))
         self.iimportKlass.setText(_translate("MainWindow", "Import File"))
         self.buttonSimpan.setText(_translate("MainWindow", "Simpan"))
         self.label_2.setText(_translate("MainWindow", "Tentukan Split Data :"))
@@ -159,16 +174,35 @@ class Ui_MainWindow(object):
 
 
     def clicked(self):
-        # self.model.test()
-        print(model.m)
+        self.model.c5()
+        self.scrollArea.setPlainText(self.model.result)
+        # print(model.m)
 
-def min(model):
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow(model)
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
+    def impFile(self):
+        # self.model.test()
+        fname,_ = QFileDialog.getOpenFileName(QtWidgets.QWidget(), "Open File", " ", "CSV File (*.csv)")
+        self.filename = QFileInfo(fname).fileName()
+        print(self.filename)
+
+
+        if fname:
+            self.fileName.setText(str(self.filename))
+        return self.filename
+
+    def saveFile(self):
+        self.fnames = (self.filename)
+        self.splitVal = (self.spinBox.value())
+        self.strval= (str(self.splitVal))
+        print("split data value = " + str(self.splitVal))
+        # print(self.fnames)
+#
+# def min(model):
+#     import sys
+#     app = QtWidgets.QApplication(sys.argv)
+#     MainWindow = QtWidgets.QMainWindow()
+#     ui = Ui_MainWindow(model)
+#     ui.setupUi(MainWindow)
+#     MainWindow.show()
+#     sys.exit(app.exec_())
 
 # min(model)

@@ -19,6 +19,8 @@ class MyWindow(QMainWindow):
 
 
     def initUI(self):
+        self.centralwidget = QtWidgets.QWidget(QMainWindow)
+        self.tabWidget = QtWidgets.QtabWidget(self.centralWidget)
         # ===========================================================Judul
         self.label = QtWidgets.QLabel(self)
         self.label.setText("PREDIKSI PENGANGGURAN")
