@@ -178,7 +178,7 @@ class Ui_MainWindow(object):
 
 
     def clicked(self):
-        self.model.c5()
+        self.model.Classify()
         # self.Predict.predict()
         self.scrollArea.setPlainText(self.model.result)
         # print(model.m)
@@ -199,7 +199,8 @@ class Ui_MainWindow(object):
         print(self.filepred)
         if fPred:
             self.filePred.setText(str(self.filepred))
-        self.predName = self.filePred
+        self.predName = self.filepred
+        self.model.predct()
         return self.filepred
 
     def saveFile(self):
@@ -208,6 +209,10 @@ class Ui_MainWindow(object):
         self.strval= (str(self.splitVal))
         print("split data value = " + str(self.splitVal))
         # print(self.fnames)
+
+    def predd(self):
+        # self.Predict.predict()
+        self.model.predct()
 #
 # def min(model):
 #     import sys
