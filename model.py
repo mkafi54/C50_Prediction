@@ -1,4 +1,3 @@
-import string
 from collections import OrderedDict
 import pandas as pd
 import rpy2.robjects as ro
@@ -6,9 +5,8 @@ from rpy2.robjects import DataFrame
 from rpy2.robjects.packages import importr
 from rpy2 import robjects
 
-import layoutNew
-from view import *
-from layoutNew import *
+from Predict import *
+from layout import *
 
 C50 = importr('C50')
 C5_0 = robjects.r('C5.0')
@@ -33,7 +31,7 @@ class Model():
 
         app = QtWidgets.QApplication(sys.argv)
         MainWindow = QtWidgets.QMainWindow()
-        self.layoutNew = Ui_MainWindow(self)
+        self.layoutNew = Ui_MainWindow(self, Predict)
         self.layoutNew.setupUi(MainWindow)
         MainWindow.show()
         sys.exit(app.exec_())
@@ -58,6 +56,7 @@ class Model():
     #     return self.data
 
     m = "worked"
+
 
     def c5(self):
         print("Data Prediksi : ")
@@ -88,8 +87,7 @@ class Model():
 
         # test1 = ([self.view.jk], [self.view.us], [self.view.kw], [self.view.sk], [self.view.pn], [self.view.ij])
         # =========================================================================================================================== Data Prediksi
-        test = (
-        ['laki laki'], ['17-25'], ['belum kawin'], ['tidak bersekolah lagi'], ['SMA/SMK/SMALB'], ['SMA/sederajat'])
+        test = (['laki laki'], ['17-25'], ['belum kawin'], ['tidak bersekolah lagi'], ['SMA/SMK/SMALB'], ['SMA/sederajat'])
         rtest = list(map(ro.StrVector, test))
         q = OrderedDict(zip(map(str, range(len(rtest))), rtest))
         datatest = DataFrame(q)
@@ -101,7 +99,7 @@ class Model():
         flsplit = float(valSplit)
         print(flsplit)
         print(type(flsplit))
-        model = C50.C5_0(vard, y, control=C50.C5_0Control(sample=flsplit))
+        model = C50.C5_0(vard, y, trials=1, rules=False , control=C50.C5_0Control(noGlobalPruning=True, sample=flsplit))
         # C50.C5_0Control(sample = 0.3)
 
         print(test)
