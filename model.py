@@ -18,6 +18,10 @@ class Model():
 
     def __init__(self):
         self.prd = None
+        self.lst = []
+        self.df = None
+        self.predData = None
+        self.df = None
         self.predict = None
         self.data = None
         self.dataPred = None
@@ -38,7 +42,7 @@ class Model():
 
     m = "worked"
 
-    def predct(self):
+    def importPredict(self):
         atrib = ['jenis_kelamin',
                  'rentang_usia',
                  'status_kawin',
@@ -47,18 +51,31 @@ class Model():
                  'ijazah_tertinggi']
         predname = self.layoutNew.filepred
         print(predname)
-        predData = pd.read_csv('PrediksiData.csv', sep=";", header=0, names=atrib)
+        self.predData = pd.read_csv('PrediksiData.csv', sep=";", header=0, names=atrib)
+        print(' data Prediksi : '+self.predData)
 
-        df = pd.DataFrame(predData)
+        return self.predData
+
+    def getData(self):
+        return self.importPredict()
+
+    def prediks(self):
+        print('masuk predict')
+        # dp = self.importPredict()
+        print('asign data')
+        self.df = pd.DataFrame(self.predData)
+        print('asign data')
+        print(self.df)
         c = 0
-        idx = len(df.index)
+        idx = len(self.df.index)
         # print(len(df.index))
-        lst=[]
+        self.lst=[]
         # ===========================================================================PREDICT LOOPING
+        print('masuk looping')
         for c in range(idx):
-            Test = ([str(df.iloc[c, 0])], [str(df.iloc[c, 1])],
-                    [str(df.iloc[c, 2])], [str(df.iloc[c, 3])],
-                    [str(df.iloc[c, 4])], [str(df.iloc[c, 5])])
+            Test = ([str(self.df.iloc[c, 0])], [str(self.df.iloc[c, 1])],
+                    [str(self.df.iloc[c, 2])], [str(self.df.iloc[c, 3])],
+                    [str(self.df.iloc[c, 4])], [str(self.df.iloc[c, 5])])
 
             rTest = list(map(ro.StrVector, Test))
             q = OrderedDict(zip(map(str, range(len(rTest))), rTest))
@@ -70,13 +87,20 @@ class Model():
             res = predRes.split(' ')[1]
             partres = res.partition("\n")
             resFinal = partres[0]
-            lst.append(resFinal)
-        print(lst)
-        df['Prediksi'] = lst
-        print(df)
-        df.to_excel(r'D:\kuliah\TA2\export hasil\df.xlsx')
-        print('data berhasil di export')
+            self.lst.append(resFinal)
+        print('keluar looping')
+        print(self.lst)
 
+    def geter(self):
+        return self.predict()
+
+    def exportPredict(self):
+
+        # p = self.geter()
+        self.df['Prediksi'] = self.lst
+        print(self.df)
+        self.df.to_excel(r'D:\kuliah\TA2\export hasil\df.xlsx')
+        print('data berhasil di export')
 
 
     def Classify(self):
@@ -121,7 +145,7 @@ class Model():
         flsplit = float(valSplit)
         # print(flsplit)
         # print(type(flsplit))
-        model = C50.C5_0(vard, y, trials=1, rules=False , control=C50.C5_0Control(noGlobalPruning=True, sample=flsplit))
+        model = C50.C5_0(vard, y, trials=1, rules=False , control=C50.C5_0Control(noGlobalPruning=True, bands=0, sample=flsplit, earlyStopping=True, seed=9999))
         # C50.C5_0Control(sample = 0.3)
 
         # print(self.dataPred)

@@ -127,18 +127,18 @@ class Ui_MainWindow(object):
         self.filePred.setGeometry(QtCore.QRect(10, 10, 999, 13))
 
         # self.filePred.setObjectName("filePred")
-        self.label_5 = QtWidgets.QLabel(self.tab_3)
-        self.label_5.setGeometry(QtCore.QRect(20, 80, 71, 16))
-        self.label_5.setObjectName("label_5")
-        self.scrollArea_2 = QtWidgets.QScrollArea(self.tab_3)
-        self.scrollArea_2.setGeometry(QtCore.QRect(20, 110, 351, 80))
-        self.scrollArea_2.setStyleSheet("background-color: rgb(255, 255, 255);\n" "border-color: rgb(0, 0, 0);")
-        self.scrollArea_2.setWidgetResizable(True)
-        self.scrollArea_2.setObjectName("scrollArea_2")
-        self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 349, 78))
-        self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
-        self.scrollArea_2.setWidget(self.scrollAreaWidgetContents_2)
+        self.prediksi = QtWidgets.QPushButton(self.tab_3)
+        self.prediksi.setGeometry(QtCore.QRect(20, 90, 91, 31))
+        self.prediksi.setStyleSheet("background-color: rgb(170, 170, 127);\n" "font: 75 10pt \"MS Shell Dlg 2\";")
+        self.prediksi.clicked.connect(self.predd)
+        self.prediksi.setObjectName("prediksi")
+        self.expPredict = QtWidgets.QPushButton(self.tab_3)
+        self.expPredict.setGeometry(QtCore.QRect(20, 140, 91, 31))
+        self.expPredict.setStyleSheet("background-color: rgb(170, 170, 127);\n" "font: 75 10pt \"MS Shell Dlg 2\";")
+        self.expPredict.clicked.connect(self.exptPredict)
+        self.expPredict.setObjectName("expPredict")
+
+
         #====================================================================================================
         self.tabWidget.addTab(self.tab_3, "")
         self.label = QtWidgets.QLabel(self.centralwidget)
@@ -171,8 +171,9 @@ class Ui_MainWindow(object):
         self.startKlass.setText(_translate("MainWindow", "Mulai Klasifikasi"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "Klasifikasi"))
         self.importPred.setText(_translate("MainWindow", "Import File"))
+        self.prediksi.setText(_translate("MainWindow", "Mulai Prediksi"))
+        self.expPredict.setText(_translate("MainWindow", "Ekspor Hasil"))
         # self.filePred.setText(_translate("MainWindow", "TextLabel"))
-        self.label_5.setText(_translate("MainWindow", "Hasil Prediksi : "))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _translate("MainWindow", "Prediksi"))
         self.label.setText(_translate("MainWindow", "PREDIKSI PENGANGGURAN"))
 
@@ -183,15 +184,6 @@ class Ui_MainWindow(object):
         self.scrollArea.setPlainText(self.model.result)
         # print(model.m)
 
-    def impFile(self):
-        # self.model.test()
-        fname,_ = QFileDialog.getOpenFileName(QtWidgets.QWidget(), "Open File", " ", "CSV File (*.csv)")
-        self.filename = QFileInfo(fname).fileName()
-        print(self.filename)
-        if fname:
-            self.fileName.setText(str(self.filename))
-        return self.filename
-
     def impPred(self):
 
         fPred, _ = QFileDialog.getOpenFileName(QtWidgets.QWidget(), "Open File", " ", "CSV File (*.csv)")
@@ -200,8 +192,21 @@ class Ui_MainWindow(object):
         if fPred:
             self.filePred.setText(str(self.filepred))
         self.predName = self.filepred
-        self.model.predct()
+        self.model.importPredict()
         return self.filepred
+
+    def exptPredict(self):
+        self.model.exportPredict()
+
+    def impFile(self):
+        # self.model.test()
+        fname,_ = QFileDialog.getOpenFileName(QtWidgets.QWidget(), "Open File", " ", "CSV File (*.csv)")
+        self.filename = QFileInfo(fname).fileName()
+        print(self.filename)
+        if fname:
+            self.fileName.setText(str(self.filename))
+
+        return self.filename
 
     def saveFile(self):
         self.fnames = (self.filename)
@@ -212,7 +217,10 @@ class Ui_MainWindow(object):
 
     def predd(self):
         # self.Predict.predict()
-        self.model.predct()
+        self.model.prediks()
+
+    def testprint(self):
+        print('works')
 #
 # def min(model):
 #     import sys

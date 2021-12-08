@@ -25,7 +25,7 @@ class Predict():
         # self.model = model(self)
 
 
-    def predict(self):
+    def redict(self):
         atrib = ['jenis_kelamin',
                  'rentang_usia',
                  'status_kawin',
