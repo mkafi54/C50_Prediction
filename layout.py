@@ -10,18 +10,22 @@
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QUrl, QFileInfo
-from PyQt5.QtWidgets import QLabel, QFileDialog
+from PyQt5.QtWidgets import QLabel, QFileDialog, QMessageBox
 
 import model
+from predict import Predict
 
 
 class Ui_MainWindow(object):
-    def __init__(self, model, Predict):
+    def __init__(self, model):
         self.filename = None
         self.filePred = None
         self.splitVal = None
+        self.df = None
+        self.lst = None
+        self.predData = None
         self.model = model
-        self.Predict = Predict
+        # self.Predict = Predict
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -32,6 +36,15 @@ class Ui_MainWindow(object):
 
         self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
         self.tabWidget.setGeometry(QtCore.QRect(30, 40, 511, 231))
+        font = QtGui.QFont()
+        font.setFamily("Cambria")
+        font.setPointSize(10)
+        font.setBold(True)
+        font.setWeight(75)
+        font.setStyleStrategy(QtGui.QFont.NoAntialias)
+        self.tabWidget.setFont(font)
+        self.tabWidget.setFocusPolicy(QtCore.Qt.TabFocus)
+        self.tabWidget.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
         self.tabWidget.setStyleSheet("background-color: rgb(203, 255, 153);")
         self.tabWidget.setObjectName("tabWidget")
 
@@ -40,32 +53,63 @@ class Ui_MainWindow(object):
 #=================================================================================== Tab 1
         self.frame = QtWidgets.QFrame(self.tab)
         self.frame.setGeometry(QtCore.QRect(10, 20, 351, 51))
+
         self.frame.setStyleSheet("background-color : rgb(255, 255, 255);\n" "border-color: rgb(8, 8, 8);")
         self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame.setObjectName("frame")
         self.fileName = QtWidgets.QLabel(self.frame)
         self.fileName.setGeometry(QtCore.QRect(10, 0, 9999, 13))
-        # self.fileName.setObjectName("fileName")
+        font = QtGui.QFont()
+        font.setFamily("Cambria")
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        self.fileName.setFont(font)
+        self.fileName.setObjectName("fileName")
 
         self.spinBox = QtWidgets.QSpinBox(self.tab, value=1, prefix='0.')
         self.spinBox.setGeometry(QtCore.QRect(210, 100, 42, 22))
+        font = QtGui.QFont()
+        font.setFamily("Cambria")
+        font.setPointSize(10)
+        font.setBold(True)
+        font.setWeight(75)
+        self.spinBox.setFont(font)
         self.spinBox.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.spinBox.setObjectName("spinBox")
         self.iimportKlass = QtWidgets.QPushButton(self.tab)
         self.iimportKlass.setGeometry(QtCore.QRect(400, 20, 81, 31))
+        font = QtGui.QFont()
+        font.setFamily("Cambria")
+        font.setPointSize(10)
+        font.setBold(True)
+        font.setWeight(75)
+        self.iimportKlass.setFont(font)
         self.iimportKlass.setStyleSheet("background-color: rgb(170, 170, 127);")
         self.iimportKlass.setObjectName("iimportKlass")
         self.iimportKlass.clicked.connect(self.impFile)
 
         self.buttonSimpan = QtWidgets.QPushButton(self.tab)
         self.buttonSimpan.setGeometry(QtCore.QRect(400, 100, 81, 31))
+        font = QtGui.QFont()
+        font.setFamily("Cambria")
+        font.setPointSize(10)
+        font.setBold(True)
+        font.setWeight(75)
+        self.buttonSimpan.setFont(font)
         self.buttonSimpan.setStyleSheet("background-color: rgb(170, 170, 127);")
         self.buttonSimpan.setObjectName("buttonSimpan")
         self.buttonSimpan.clicked.connect(self.saveFile)
 
         self.label_2 = QtWidgets.QLabel(self.tab)
         self.label_2.setGeometry(QtCore.QRect(20, 100, 101, 16))
+        font = QtGui.QFont()
+        font.setFamily("Cambria")
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_2.setFont(font)
         self.label_2.setObjectName("label_2")
         #===================================================================
         self.tabWidget.addTab(self.tab, "")
@@ -74,15 +118,39 @@ class Ui_MainWindow(object):
         self.tab_2.setObjectName("tab_2")
         self.label_3 = QtWidgets.QLabel(self.tab_2)
         self.label_3.setGeometry(QtCore.QRect(10, 20, 61, 16))
+        font = QtGui.QFont()
+        font.setFamily("Cambria")
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_3.setFont(font)
         self.label_3.setObjectName("label_3")
         self.label_4 = QtWidgets.QLabel(self.tab_2)
         self.label_4.setGeometry(QtCore.QRect(10, 40, 51, 16))
+        font = QtGui.QFont()
+        font.setFamily("Cambria")
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_4.setFont(font)
         self.label_4.setObjectName("label_4")
         self.SplitLabel = QtWidgets.QLabel(self.tab_2)
         self.SplitLabel.setGeometry(QtCore.QRect(70, 20, 47, 13))
+        font = QtGui.QFont()
+        font.setFamily("Cambria")
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        self.SplitLabel.setFont(font)
         self.SplitLabel.setObjectName("SplitLabel")
         self.DatasetLabel = QtWidgets.QLabel(self.tab_2)
-        self.DatasetLabel.setGeometry(QtCore.QRect(70, 40, 71, 16))
+        self.DatasetLabel.setGeometry(QtCore.QRect(70, 40, 999, 16))
+        font = QtGui.QFont()
+        font.setFamily("Cambria")
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        self.DatasetLabel.setFont(font)
         self.DatasetLabel.setObjectName("DatasetLabel")
         #===================================================================== View Result
 
@@ -91,27 +159,43 @@ class Ui_MainWindow(object):
         self.scrollArea.setStyleSheet("background-color: rgb(255, 255, 255);")
         # self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
-
-        # labellist = []
-        
-
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 449, 89))
+        font = QtGui.QFont()
+        font.setFamily("Cambria")
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        self.scrollAreaWidgetContents.setFont(font)
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         # self.scrollArea.setWidget(self.scrollAreaWidgetContents)
 
         self.startKlass = QtWidgets.QPushButton(self.tab_2)
         self.startKlass.setGeometry(QtCore.QRect(380, 20, 101, 31))
+        font = QtGui.QFont()
+        font.setFamily("MS Shell Dlg 2")
+        font.setPointSize(10)
+        font.setBold(False)
+        font.setItalic(False)
+        font.setWeight(9)
+        self.startKlass.setFont(font)
         self.startKlass.setStyleSheet("background-color: rgb(170, 170, 127);\n" "font: 75 10pt \"MS Shell Dlg 2\";\n" "border-color: rgb(0, 0, 0);")
         self.startKlass.setObjectName("startKlass")
 
         self.startKlass.clicked.connect(self.clicked)
-        #===========================================================================================
         self.tabWidget.addTab(self.tab_2, "")
+        #===========================================================================================
         self.tab_3 = QtWidgets.QWidget()
         self.tab_3.setObjectName("tab_3")
         self.importPred = QtWidgets.QPushButton(self.tab_3)
         self.importPred.setGeometry(QtCore.QRect(410, 20, 81, 31))
+        font = QtGui.QFont()
+        font.setFamily("MS Shell Dlg 2")
+        font.setPointSize(10)
+        font.setBold(False)
+        font.setItalic(False)
+        font.setWeight(9)
+        self.importPred.setFont(font)
         self.importPred.setStyleSheet("background-color: rgb(170, 170, 127);\n" "font: 75 10pt \"MS Shell Dlg 2\";")
 
         self.importPred.setObjectName("importPred")
@@ -125,24 +209,48 @@ class Ui_MainWindow(object):
         self.frame_2.setObjectName("frame_2")
         self.filePred = QtWidgets.QLabel(self.frame_2)
         self.filePred.setGeometry(QtCore.QRect(10, 10, 999, 13))
-
-        # self.filePred.setObjectName("filePred")
+        font = QtGui.QFont()
+        font.setFamily("Cambria")
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        self.filePred.setFont(font)
+        self.filePred.setObjectName("filePred")
         self.prediksi = QtWidgets.QPushButton(self.tab_3)
         self.prediksi.setGeometry(QtCore.QRect(20, 90, 91, 31))
+        ont = QtGui.QFont()
+        font.setFamily("MS Shell Dlg 2")
+        font.setPointSize(10)
+        font.setBold(False)
+        font.setItalic(False)
+        font.setWeight(9)
+        self.prediksi.setFont(font)
         self.prediksi.setStyleSheet("background-color: rgb(170, 170, 127);\n" "font: 75 10pt \"MS Shell Dlg 2\";")
         self.prediksi.clicked.connect(self.predd)
         self.prediksi.setObjectName("prediksi")
         self.expPredict = QtWidgets.QPushButton(self.tab_3)
         self.expPredict.setGeometry(QtCore.QRect(20, 140, 91, 31))
+        font = QtGui.QFont()
+        font.setFamily("MS Shell Dlg 2")
+        font.setPointSize(10)
+        font.setBold(False)
+        font.setItalic(False)
+        font.setWeight(9)
+        self.expPredict.setFont(font)
         self.expPredict.setStyleSheet("background-color: rgb(170, 170, 127);\n" "font: 75 10pt \"MS Shell Dlg 2\";")
         self.expPredict.clicked.connect(self.exptPredict)
         self.expPredict.setObjectName("expPredict")
 
-
         #====================================================================================================
         self.tabWidget.addTab(self.tab_3, "")
         self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(210, 10, 131, 16))
+        self.label.setGeometry(QtCore.QRect(130, 10, 311, 16))
+        font = QtGui.QFont()
+        font.setFamily("Cambria")
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label.setFont(font)
         self.label.setObjectName("label")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -166,8 +274,8 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "Kelola Data"))
         self.label_3.setText(_translate("MainWindow", "Split Data :"))
         self.label_4.setText(_translate("MainWindow", "Dataset    :"))
-        self.SplitLabel.setText(_translate("MainWindow", "splitLabel"))
-        self.DatasetLabel.setText(_translate("MainWindow", "DatasetLabel"))
+        # self.SplitLabel.setText(_translate("MainWindow", "splitLabel"))
+        # self.DatasetLabel.setText(_translate("MainWindow", "DatasetLabel"))
         self.startKlass.setText(_translate("MainWindow", "Mulai Klasifikasi"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "Klasifikasi"))
         self.importPred.setText(_translate("MainWindow", "Import File"))
@@ -175,28 +283,35 @@ class Ui_MainWindow(object):
         self.expPredict.setText(_translate("MainWindow", "Ekspor Hasil"))
         # self.filePred.setText(_translate("MainWindow", "TextLabel"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _translate("MainWindow", "Prediksi"))
-        self.label.setText(_translate("MainWindow", "PREDIKSI PENGANGGURAN"))
-
+        self.label.setText(_translate("MainWindow", "PREDIKSI PENGANGGURAN KEC.CARINGIN"))
 
     def clicked(self):
-        self.model.Classify()
-        # self.Predict.predict()
-        self.scrollArea.setPlainText(self.model.result)
-        # print(model.m)
+        try:
+            self.model.Classify()
+            self.scrollArea.setPlainText(self.model.result)
+            self.show_popupClassify()
+        except:
+            self.show_popupDataEmpty()
 
     def impPred(self):
-
         fPred, _ = QFileDialog.getOpenFileName(QtWidgets.QWidget(), "Open File", " ", "CSV File (*.csv)")
         self.filepred = QFileInfo(fPred).fileName()
         print(self.filepred)
         if fPred:
             self.filePred.setText(str(self.filepred))
         self.predName = self.filepred
-        self.model.importPredict()
+        # self.model.importPredict()
+        self.predData = Predict.importPredict(namefile=self.predName)
+        self.show_popupImp()
         return self.filepred
 
     def exptPredict(self):
-        self.model.exportPredict()
+        try:
+            # self.model.exportPredict()
+            Predict.exportPredict(self.df, self.lst)
+            self.show_popupExpt()
+        except :
+            self.show_popupNotClassy()
 
     def impFile(self):
         # self.model.test()
@@ -205,30 +320,73 @@ class Ui_MainWindow(object):
         print(self.filename)
         if fname:
             self.fileName.setText(str(self.filename))
-
+        self.show_popupImp()
         return self.filename
 
     def saveFile(self):
-        self.fnames = (self.filename)
-        self.splitVal = (self.spinBox.value())
-        self.strval= (str(self.splitVal))
-        print("split data value = " + str(self.splitVal))
-        # print(self.fnames)
+        try:
+            self.fnames = (self.filename)
+            self.splitVal = (self.spinBox.value())
+            self.strval= (str(self.splitVal))
+            self.SplitLabel.setText('0.'+self.strval)
+            self.DatasetLabel.setText(self.fnames)
+            self.show_popupSave()
+            print("split data value = " + str(self.splitVal))
+        except:
+            self.show_popupDataEmpty()
 
     def predd(self):
-        # self.Predict.predict()
-        self.model.prediks()
+        try:
+            # self.model.prediks()
+            self.df, self.lst = Predict.prediks(self.predData, self.model.Classify(), self.model.rob)
+            self.show_popupPredict()
+        except:
+            self.show_popupNotClassy()
 
-    def testprint(self):
-        print('works')
-#
-# def min(model):
-#     import sys
-#     app = QtWidgets.QApplication(sys.argv)
-#     MainWindow = QtWidgets.QMainWindow()
-#     ui = Ui_MainWindow(model)
-#     ui.setupUi(MainWindow)
-#     MainWindow.show()
-#     sys.exit(app.exec_())
+    def show_popupImp(self):
+        msg = QMessageBox()
+        msg.setWindowTitle('Prediksi Pengangguran')
+        msg.setText('Data Berhasl Di Impor')
+        x = msg.exec()
 
-# min(model)
+    def show_popupSave(self):
+        msg = QMessageBox()
+        msg.setWindowTitle('Prediksi Pengangguran')
+        msg.setText('Data Berhasl Disimpan')
+        x = msg.exec()
+
+    def show_popupClassify(self):
+        msg = QMessageBox()
+        msg.setWindowTitle('Prediksi Pengangguran')
+        msg.setText('Klasifikasi Selesai')
+        x = msg.exec()
+
+    def show_popupPredict(self):
+        msg = QMessageBox()
+        msg.setWindowTitle('Prediksi Pengangguran')
+        msg.setText('Prediksi Selesai')
+        x = msg.exec()
+
+    def show_popupExpt(self):
+        msg = QMessageBox()
+        msg.setWindowTitle('Prediksi Pengangguran')
+        msg.setText('Data Berhasil Diekspor')
+        x = msg.exec()
+
+    def show_popupDataEmpty(self):
+        msg = QMessageBox()
+        msg.setWindowTitle('Prediksi Pengangguran')
+        msg.setText('Data Belum dI Import')
+        x = msg.exec()
+
+    def show_popupNotPredict(self):
+        msg = QMessageBox()
+        msg.setWindowTitle('Prediksi Pengangguran')
+        msg.setText('Belum Ada Hasil Prediksi')
+        x = msg.exec()
+
+    def show_popupNotClassy(self):
+        msg = QMessageBox()
+        msg.setWindowTitle('Prediksi Pengangguran')
+        msg.setText('Data Belum Di Import\n atau Data Belum di Klasifikasi')
+        x = msg.exec()

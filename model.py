@@ -5,7 +5,7 @@ from rpy2.robjects import DataFrame
 from rpy2.robjects.packages import importr
 from rpy2 import robjects
 
-from Predict import Predict
+from predict import Predict
 from layout import *
 
 C50 = importr('C50')
@@ -17,30 +17,26 @@ base = importr("base")
 class Model():
 
     def __init__(self):
-        self.prd = None
         self.lst = []
-        self.df = None
         self.predData = None
         self.df = None
         self.predict = None
         self.data = None
         self.dataPred = None
         self.result = None
-        self.model = None
-        self.dataPredd = None
         self.C50 = importr('C50')
         self.C5_0 = robjects.r('C5.0')
         self.stats = importr('stats')
         self.base = importr("base")
+        self.rob = robjects
 
         app = QtWidgets.QApplication(sys.argv)
         MainWindow = QtWidgets.QMainWindow()
-        self.layoutNew = Ui_MainWindow(self, self.predict)
+        self.layoutNew = Ui_MainWindow(self)
         self.layoutNew.setupUi(MainWindow)
         MainWindow.show()
         sys.exit(app.exec_())
 
-    m = "worked"
 
     def importPredict(self):
         atrib = ['jenis_kelamin',
@@ -51,24 +47,16 @@ class Model():
                  'ijazah_tertinggi']
         predname = self.layoutNew.filepred
         print(predname)
-        self.predData = pd.read_csv('PrediksiData.csv', sep=";", header=0, names=atrib)
+        self.predData = pd.read_csv(predname, sep=";", header=0, names=atrib)
         print(' data Prediksi : '+self.predData)
-
-        return self.predData
-
-    def getData(self):
-        return self.importPredict()
 
     def prediks(self):
         print('masuk predict')
-        # dp = self.importPredict()
         print('asign data')
         self.df = pd.DataFrame(self.predData)
         print('asign data')
         print(self.df)
-        c = 0
         idx = len(self.df.index)
-        # print(len(df.index))
         self.lst=[]
         # ===========================================================================PREDICT LOOPING
         print('masuk looping')
@@ -80,8 +68,6 @@ class Model():
             rTest = list(map(ro.StrVector, Test))
             q = OrderedDict(zip(map(str, range(len(rTest))), rTest))
             self.dataPred = DataFrame(q)
-            # print("class predict")
-
             predictModel = self.Classify()
             predRes = str(robjects.r.predict(predictModel, self.dataPred))
             res = predRes.split(' ')[1]
@@ -91,21 +77,17 @@ class Model():
         print('keluar looping')
         print(self.lst)
 
-    def geter(self):
-        return self.predict()
-
     def exportPredict(self):
-
-        # p = self.geter()
         self.df['Prediksi'] = self.lst
         print(self.df)
         self.df.to_excel(r'D:\kuliah\TA2\export hasil\df.xlsx')
         print('data berhasil di export')
 
+    def valSplit(self,layoutNew):
+        valsplit = '0.'+layoutNew
+        return valsplit
 
-    def Classify(self):
-        # print("Data Prediksi : ")
-        # self.Predict.predict()
+    def importClass(self):
         atribute = ['jenis_kelamin',
                     'rentang_usia',
                     'status_kawin',
@@ -115,9 +97,11 @@ class Model():
                     'menganggur']
 
         file = self.layoutNew.fnames
-        self.data = pd.read_csv(file, sep=";", header=0, names=atribute)
-        # print("in Model : "+file)
-        # self.data = pd.read_csv(r'C:\Users\ACER\PycharmProjects\penduduknew.csv', sep=";", header=0, names=atribute)
+        self.Data = pd.read_csv(file, sep=";", header=0, names=atribute)
+        return self.Data
+
+    def Classify(self):
+        self.data = self.importClass()
         valY = robjects.StrVector(self.data.menganggur)
         y = robjects.vectors.FactorVector(valY)
 
@@ -139,13 +123,12 @@ class Model():
         # datatest = DataFrame(q)
 
         # print(self.layoutNew.spinBox.value)
-        valSplit = '0.'+self.layoutNew.strval
-        # print(valSplit)
-        # print(type(valSplit))
-        flsplit = float(valSplit)
+
+        valSplit = self.valSplit(self.layoutNew.strval)
+        self.flsplit = float(valSplit)
         # print(flsplit)
         # print(type(flsplit))
-        model = C50.C5_0(vard, y, trials=1, rules=False , control=C50.C5_0Control(noGlobalPruning=True, bands=0, sample=flsplit, earlyStopping=True, seed=9999))
+        model = C50.C5_0(vard, y, trials=1, rules=False , control=C50.C5_0Control(noGlobalPruning=True, bands=0, sample=self.flsplit, earlyStopping=True, seed=9999))
         # C50.C5_0Control(sample = 0.3)
 
         # print(self.dataPred)
