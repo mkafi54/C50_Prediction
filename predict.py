@@ -1,16 +1,8 @@
-import sys
 from collections import OrderedDict
 
 import pandas as pd
 from rpy2.robjects import DataFrame
-from rpy2.robjects.packages import importr
 import rpy2.robjects as ro
-
-# from model import Model
-# from layout import *
-# from layout import Ui_MainWindow
-# from model import Model
-from abc import abstractmethod
 
 
 class Predict():
