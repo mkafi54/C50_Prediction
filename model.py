@@ -56,6 +56,14 @@ class Model():
         self.Data = pd.read_csv(file, sep=";", header=0, names=atribute)
         return self.Data
 
+    def prunValue(self):
+        toggle = (self.layoutNew.prunVal)
+        if toggle is True:
+            prunVal = False
+        else:
+            prunVal = True
+        return prunVal
+
     def Classify(self):
         global prunVal
         self.data = self.importClass()
@@ -85,25 +93,31 @@ class Model():
         else:
             prunVal = True
         print("pruning value : ",prunVal)
-        model = C50.C5_0(vard, y, trials=1, rules=False, control=C50.C5_0Control(noGlobalPruning=prunVal, bands=0, sample=self.flsplit,  earlyStopping=True, seed=9999))
+        model = C50.C5_0(vard, y, trials=1, rules=False, control=C50.C5_0Control(noGlobalPruning=prunVal, bands=2, sample=self.flsplit,
+                                                                                  earlyStopping=True, seed=9999))
 
         # self.results = str(base.summay(model))
         str(base.summary(model))
         conf = str(base.summary(model)).partition("Evaluation")
+        con = str(base.summary(model)).splitlines()
+        # print(con)
+        # print("THIS    : ",con[36:58])
+
         prin = conf[2]
         e = prin.partition("\t5\n\n\n")
-        print("Evaluation",e[0])
-        self.result = str("Evaluation"+e[0])
+        f = e[0]
+        g = f.partition("\n\n\nEvaluation")
+        print(g)
+        print("Evaluation",g[0])
+        # self.result = str(base.summary(model))
+        self.result = str("Evaluation" + g[0])
 
-        # self.result = str(str(base.summary(model)))
-        # print(str(base.summary(model)))
-        # print(type(str(base.summary(model))))
         return self.flsplit,prunVal,vard,y
 
     def predic(self):
         print("works")
         spltVal,prnVal,dVar,vy = self.Classify()
-        prd = C50.C5_0(dVar, vy, trials=1, rules=False,control=C50.C5_0Control(noGlobalPruning=prnVal, bands=0, sample=spltVal ,earlyStopping=True, seed=9999))
+        prd = C50.C5_0(dVar, vy, trials=1, rules=False ,control=C50.C5_0Control(noGlobalPruning=prnVal, bands=0, sample=spltVal ,earlyStopping=True, seed=9999))
 
         print(base.summary(prd))
         confd = str(base.summary(prd)).partition("test data")

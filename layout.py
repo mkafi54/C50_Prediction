@@ -328,7 +328,7 @@ class Ui_MainWindow(object):
         self.label_5.setText(_translate("MainWindow", "Pruning    :"))
 
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "Klasifikasi"))
-        self.importPred.setText(_translate("MainWindow", "Mulai Pediksi"))
+        self.importPred.setText(_translate("MainWindow", "Mulai Prediksi"))
         # self.prediksi.setText(_translate("MainWindow", "Mulai Prediksi"))
         # self.expPredict.setText(_translate("MainWindow", "Ekspor Hasil"))
         # self.filePred.setText(_translate("MainWindow", "TextLabel"))
@@ -384,7 +384,7 @@ class Ui_MainWindow(object):
             self.prunVal = (self.checkBox.isChecked())
             self.DatasetLabel_2.setText(str(self.prunVal))
             print("split data value = " + str(self.splitVal))
-            # print("prunning value = ", self.prunVal)
+            print("prunning value = ", self.prunVal)
         except:
             self.show_popupDataEmpty()
 
